@@ -1,0 +1,7 @@
+This is a mirror of http://www.vim.org/scripts/script.php?script_id=2803
+
+function example($unused) {
+  echo $unassigned;
+}
+
+$unused and $unassigned are highlighted when the cursor is in example().
