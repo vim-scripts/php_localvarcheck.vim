@@ -1,5 +1,5 @@
 " highlight unused/unassigned local variable
-" Last Change:  2009-10-07
+" Last Change:  2009-10-08
 " Maintainer:   Yukihiro Nakadaira <yukihiro.nakadaira@gmail.com>
 " License:      This file is placed in the public domain.
 "
@@ -165,6 +165,8 @@ function! s:FindFunction()
 
   let view = winsaveview()
 
+  call cursor(line('.'), col('$'))
+
   let [start, startcol] = searchpos('\c\v<function>', 'bWc')
   while start != 0 && eval(skip)
     let [start, startcol] = searchpos('\c\v<function>', 'bW')
@@ -203,7 +205,7 @@ function! s:FindPhp()
   endif
 
   let [start, startcol] = searchpos(phpopen, 'Wc')
-  let [end, endcol] = [line('$'), len(getline('$'))]
+  let [end, endcol] = [line('$'), col([line('$'), '$'])]
 
   call winrestview(view)
 
@@ -247,20 +249,19 @@ endfunction
 function! s:Parse(src)
   if exists('g:php_noShortTags')
     let phpopen = '\<\?php'
+    let phpclose = '\?\>'
   else
     let phpopen = '\<\?%(php)?'
+    let phpclose = '\?\>'
   endif
   if exists('g:php_asp_tags')
     let phpopen .= '|\<\%'
-    let asptag = '|\%\>.{-}%(' . phpopen . '|$)'
-  else
-    let asptag = ''
+    let phpclose .= '|\%\>'
   endif
-  let pat_syntax  = '\c\v%('
-        \ . '\?\>.{-}%(' . phpopen . '|$)'
-        \ . asptag
-        \ . '|#.{-}%(\n|\?\>)@='
-        \ . '|//.{-}%(\n|\?\>)@='
+  let pat_syntax  = '\c\v'
+        \ . '%(' . phpclose . ').{-}%(' . phpopen . '|$)'
+        \ . '|#.{-}%(\n|' . phpclose . ')@='
+        \ . '|//.{-}%(\n|' . phpclose . ')@='
         \ . '|/\*.{-}\*/'
         \ . "|'[^']*'"
         \ . '|"%(\\.|[^"])*"'
@@ -273,7 +274,6 @@ function! s:Parse(src)
         \ . '|<function>'
         \ . '|<class>'
         \ . '|[;(){}]'
-        \ . ')'
   let items = []
   let i = match(a:src, pat_syntax)
   " parse args
