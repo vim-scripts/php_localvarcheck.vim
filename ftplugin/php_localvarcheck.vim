@@ -318,7 +318,10 @@ function! s:Parse(src)
       endif
       let e = i + len(s)
     elseif s ==? 'as'
-      let _ = matchlist(a:src, '\c\vas%(\_s|&)*(\$\w+)%(\_s*\=\>%(\_s|&)*(\$\w+))?', i)
+      "let _ = matchlist(a:src, '\c\vas%(\_s|&)*(\$\w+)%(\_s*\=\>%(\_s|&)*(\$\w+))?', i)
+      " fix the regexp. @see https://groups.google.com/forum/#!topic/vim_dev/4L7p28MYIX0
+      " need to escape a & character if you use \v in a pattern, and expect to match a literal '&' character
+      let _ = matchlist(a:src, '\c\vas%(\_s|\&)*(\$\w+)%(\_s*\=\>%(\_s|\&)*(\$\w+))?', i)
       if empty(_)
         " error
         break

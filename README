@@ -5,3 +5,12 @@ function example($unused) {
 }
 
 $unused and $unassigned are highlighted when the cursor is in example().
+
+Bugfix: when use this plugin in vim7.4, I got the following error:
+
+    Error detected while processing function <SNR>79_LocalVarCheck..<SNR>79_FindBadVariables..<SNR>79_Parse:
+    line   72:
+    E874: (NFA) Could not pop the stack !
+
+Solution: need to escape a & character if use \v in a pattern, and expect to match a literal '&' character
+@see https://groups.google.com/forum/#!topic/vim_dev/4L7p28MYIX0
